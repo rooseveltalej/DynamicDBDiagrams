@@ -12,6 +12,7 @@ app = FastAPI()
 def is_running():
     return {"status": "running"}
 
+#Se reciben los parámetros mediante una solicitud HTTP con los argumentos, y luego se arma el diccionario data
 @app.get("/diagram")
 def get_diagram(
     bd: str = Query(...),
@@ -30,6 +31,7 @@ def get_diagram(
         "database": database
     }
     
+    #El information schema de cualquier de las 3 BD
     schema = None
 
     try:
@@ -293,6 +295,7 @@ def connect_sqlserver(data):
         raise HTTPException(status_code=500, detail=f"Error en SQL Server: {str(e)}")
 
 
+"""Formatea el scheme recibido de la conexión a las BD para usarse en plantUML"""
 def format_schema(schema):
     tables = {}
     relationships = set()
@@ -330,11 +333,11 @@ def format_schema(schema):
 
     return uml_output
 
-
+"""Se hace una solicitud HTTP a plantUML y se recibe """
 def generate_plantuml_image(uml_code):
     try:
         # Endpoint de PlantUML para la generación de diagramas
-        plantuml_url = "http://www.plantuml.com/plantuml/png/~1"
+        plantuml_url = "http://www.plantuml.com/plantuml/svg/~1"
 
         # Codificar el código UML a formato DEFLATE
         compressed_data = zlib.compress(uml_code.encode(), level=zlib.Z_BEST_COMPRESSION)
