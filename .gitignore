@@ -188,4 +188,19 @@ psd
 thumb
 sketch
 
+# Local
+.DS_Store
+*.local
+*.log*
+
+# Dist
+frontend/node_modules/
+frontend/dist/
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+
 # End of https://www.toptal.com/developers/gitignore/api/python,react
