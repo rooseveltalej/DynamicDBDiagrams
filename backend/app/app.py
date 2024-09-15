@@ -15,10 +15,25 @@ def is_running():
 #Se reciben los parámetros mediante una solicitud HTTP con los argumentos, y luego se arma el diccionario data
 
 @app.get("/diagram")
-
-def get_diagram():
+def get_diagram(
+    bd: str = Query(...),
+    host: str = Query(...),
+    port: int = Query(...),
+    user: str = Query(...),
+    password: str = Query(...),
+    database: str = Query(...)
+):
+    """data = {
+        "bd": bd,
+        "host": host,
+        "port": port,
+        "user": user,
+        "password": password,
+        "database": database
+    }"""
+    
     # Parametros para solicitud en MySQL
-    """"
+    """
     dataBase = "proyecto"
     hosteador = "localhost"
     puerto = 3306
@@ -26,6 +41,7 @@ def get_diagram():
     contrasena = ""
     baseDatos = "proyecto"
     """
+
     # Parametros para solicitud en PostgreSQL
     """"dataBase = "proyecto"
     hosteador = "COMPUTER"
@@ -33,12 +49,14 @@ def get_diagram():
     usuario = "postgres"
     contrasena = "Windows Authentication"
     baseDatos = "proyecto" """
+
     # Parametros para solicitud en SQL Server
     """driver = "SQL Server"
     server = "localhost"
     database = "proyecto"
     uid = "sa"  # Tu nombre de usuario
     pwd = "123"  # Tu contraseña"""
+
     # Data enviada a la función conexión para SQL SERVER
     """dataSqlServer = {
         "driver": driver,
@@ -61,6 +79,7 @@ def get_diagram():
     schema = None
 
     #Formatear el esquema en PlantUML
+
     #Consulta MySQL
     """schema = connect_mysql(data)
     formatted_schema = format_schema(schema)
@@ -68,18 +87,31 @@ def get_diagram():
     generate_uml_image(encode_text)
     # Obtener el enlace de la imagen generada por PlantUML
     uml_url = generate_plantuml_image(formatted_schema)"""
+    
     #Consulta PostgreSQL
     """schema = connect_postgres(data)
     formatted_schema = format_schema(schema)
     encode_text = encode_plantuml(formatted_schema)
     generate_uml_image(encode_text)
     uml_url = generate_plantuml_image(formatted_schema)"""
+
+
+    data = {
+        "bd": bd,
+        "host": host,
+        "port": port,
+        "user": user,
+        "password": password,
+        "database": database
+    }
+
     #Consulta SQL Server
-    """schema = connect_sqlserver(dataSqlServer)
+    schema = connect_sqlserver(data)
     formatted_schema = format_schema(schema)
     encode_text = encode_plantuml(formatted_schema)
     generate_uml_image(encode_text)
-    uml_url = generate_plantuml_image(formatted_schema)"""
+    uml_url = generate_plantuml_image(formatted_schema)
+
     uml_url = None
     return {"url": uml_url}
 
@@ -254,13 +286,20 @@ def connect_mysql(data):
 
 def connect_sqlserver(data):
     try:
-        conn = pyodbc.connect(
-            driver=data["driver"],
-            server=data["server"],
-            database=data["database"],
-            uid=data["uid"],
-            pwd=data["pwd"])
+        # Construct the connection string
+        conn_str = (
+            f"DRIVER={{ODBC Driver 17 for SQL Server}};"
+            f"SERVER={data['host']},{data['port']};"
+            f"DATABASE={data['database']};"
+            f"UID={data['user']};"
+            f"PWD={data['password']}"
+        )
+
+        # Connect to the database
+        conn = pyodbc.connect(conn_str)
         cur = conn.cursor()
+
+        # Execute the query
         cur.execute("""
             WITH TableInfo AS (
                 SELECT
@@ -335,12 +374,17 @@ def connect_sqlserver(data):
                 ti.TABLE_SCHEMA,
                 ti.TABLE_NAME,
                 ti.COLUMN_NAME;
-
         """)
+
+        # Fetch the results
         schema = cur.fetchall()
+
+        # Close the cursor and connection
         cur.close()
         conn.close()
+
         return schema
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error en SQL Server: {str(e)}")
 
