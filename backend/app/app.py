@@ -4,6 +4,7 @@ from fastapi import FastAPI, HTTPException, Query
 import psycopg2
 import mysql.connector
 import pyodbc
+from fastapi.middleware.cors import CORSMiddleware
 import requests
 
 app = FastAPI()
@@ -11,6 +12,14 @@ app = FastAPI()
 @app.get("/")
 def is_running():
     return {"status": "running"}
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Permitir solicitudes desde el frontend
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 #Se reciben los parámetros mediante una solicitud HTTP con los argumentos, y luego se arma el diccionario data
 
