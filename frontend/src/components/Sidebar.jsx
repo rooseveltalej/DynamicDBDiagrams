@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Sidebar = ({ onDataReceived }) => {
+  // Estado para almacenar los datos del formulario
   const [formData, setFormData] = useState({
     dbType: '',
     host: '',
@@ -10,13 +11,17 @@ const Sidebar = ({ onDataReceived }) => {
     password: '',
     databaseName: ''
   });
+  // Estado para controlar la visibilidad de la contraseña
   const [showPassword, setShowPassword] = useState(false);
+  // Estado para controlar si la solicitud está en proceso
   const [isLoading, setIsLoading] = useState(false);
 
+  // Función para alternar la visibilidad de la contraseña
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  // Función para manejar los cambios en los campos del formulario
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -24,10 +29,12 @@ const Sidebar = ({ onDataReceived }) => {
     });
   };
 
+  // Función para manejar el envío del formulario
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
 
+    // Construir los parámetros de la consulta
     const queryParams = new URLSearchParams({
       bd: formData.dbType,
       host: formData.host,
@@ -37,18 +44,19 @@ const Sidebar = ({ onDataReceived }) => {
       database: formData.databaseName
     }).toString();
 
+    // Realizar la solicitud al servidor
     fetch(`http://localhost:8000/diagram?${queryParams}`, {
       method: 'GET',
     })
     .then(response => response.json())
     .then(data => {
       setIsLoading(false);
-      onDataReceived(data);
+      onDataReceived(data); // Llamar a la función onDataReceived con los datos recibidos
     })
     .catch((error) => {
       setIsLoading(false);
       console.error('Error:', error);
-      onDataReceived({ error: 'Error al obtener los datos' });
+      onDataReceived({ error: 'Error al obtener los datos' }); // Llamar a la función onDataReceived con un mensaje de error
     });
   };
 
