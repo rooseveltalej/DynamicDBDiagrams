@@ -30,7 +30,14 @@ const Sidebar = () => {
     e.preventDefault();
 
     // Crear una URL con los parámetros del formulario
-    const queryParams = new URLSearchParams(formData).toString();
+    const queryParams = new URLSearchParams({
+      bd: formData.dbType,
+      host: formData.host,
+      port: formData.port,
+      user: formData.username,
+      password: formData.password,
+      database: formData.databaseName
+    }).toString();
 
     fetch(`http://localhost:8000/diagram?${queryParams}`, {
       method: 'GET',
@@ -54,7 +61,7 @@ const Sidebar = () => {
           <select className="form-select" id="dbType" value={formData.dbType} onChange={handleInputChange} required>
             <option value="" disabled>Selecciona uno</option>
             <option value="mysql">MySQL</option>
-            <option value="postgresql">PostgreSQL</option>
+            <option value="postgres">PostgreSQL</option> {/* Cambiado de 'postgresql' a 'postgres' */}
             <option value="sqlserver">SQL Server</option>
           </select>
         </div>
