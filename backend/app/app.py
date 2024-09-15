@@ -1,8 +1,17 @@
 from fastapi import FastAPI, HTTPException, Query
 from db_connections import connect_mysql, connect_postgres, connect_sqlserver
 from plantuml_request import format_schema, encode_plantuml, generate_uml_image
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000/"],  # Permitir solicitudes desde el frontend
+    allow_credentials=True,
+    allow_methods=[""],
+    allow_headers=[""],
+)
 
 @app.get("/")
 def is_running():
@@ -42,7 +51,7 @@ def get_diagram(
         
         # Formatear el esquema en PlantUML
         formatted_schema = format_schema(schema)
-        
+
         encode_text = encode_plantuml(formatted_schema)
         
         # Obtener el enlace de la imagen generada por PlantUML
