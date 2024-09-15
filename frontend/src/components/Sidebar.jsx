@@ -101,7 +101,7 @@ const Sidebar = () => {
           <label htmlFor="databaseName" className="form-label text-black">Nombre de la base de datos</label>
           <input type="text" className="form-control" id="databaseName" value={formData.databaseName} onChange={handleInputChange} required />
         </div>
-        <button type="submit" className="btn btn-primary">Guardar</button>
+        <button type="submit" className="btn btn-primary">Generar</button>
       </form>
     </div>
   );
