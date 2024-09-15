@@ -1,3 +1,4 @@
+/* src/App.css */
 body {
   margin: 0;
   color: #fff;
@@ -12,6 +13,8 @@ body {
   text-align: center;
   flex-direction: column;
   justify-content: center;
+  margin-left: 250px; /* Asegúrate de que coincida con el ancho del Sidebar */
+  padding: 1rem; /* Agrega un poco de espacio alrededor del contenido */
 }
 
 .content h1 {
@@ -23,4 +26,16 @@ body {
   font-size: 1.2rem;
   font-weight: 400;
   opacity: 0.5;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px; /* Ancho del Sidebar */
+  height: 100vh;
+  background-color: #f8f9fa; /* Ajusta el color según tu diseño */
+  border-right: 1px solid #dee2e6;
+  z-index: 1000; /* Asegúrate de que el z-index sea alto */
+  overflow-y: auto; /* Permite el scroll si el contenido es más largo que la ventana */
 }

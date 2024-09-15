@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const Sidebar = () => {
+const Sidebar = ({ onDataReceived }) => {
   const [formData, setFormData] = useState({
     dbType: '',
     host: '',
@@ -11,13 +11,12 @@ const Sidebar = () => {
     databaseName: ''
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Función para alternar la visibilidad de la contraseña
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  // Función para manejar cambios en el formulario
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -25,11 +24,10 @@ const Sidebar = () => {
     });
   };
 
-  // Función para enviar datos al servidor
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    // Crear una URL con los parámetros del formulario
     const queryParams = new URLSearchParams({
       bd: formData.dbType,
       host: formData.host,
@@ -44,11 +42,13 @@ const Sidebar = () => {
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Success:', data);
-      // Aquí podrías mostrar el diagrama o manejar la respuesta como lo desees
+      setIsLoading(false);
+      onDataReceived(data);
     })
     .catch((error) => {
+      setIsLoading(false);
       console.error('Error:', error);
+      onDataReceived({ error: 'Error al obtener los datos' });
     });
   };
 
