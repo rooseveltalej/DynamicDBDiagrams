@@ -21,6 +21,9 @@ const ImageDisplay = ({ data }) => {
             <p className="text-sm text-gray-500 mt-2">
               Generado el: {new Date(data.timestamp).toLocaleString()}
             </p>
+            <p className="text-sm text-gray-500">
+              Base de datos: {data.dbType} - Host: {data.host} - Port: {data.port}
+            </p>
           </div>
         );
       }

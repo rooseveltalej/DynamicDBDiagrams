@@ -22,7 +22,12 @@ const App = () => {
       const newDiagram = {
         ...data,
         timestamp: new Date().toISOString(),
-        name: `Diagrama ${diagrams.length + 1}`
+        name: `Diagrama ${diagrams.length + 1}`,
+        bdtype: data.dbType,
+        host: data.host,
+        port: data.port,
+        username: data.username,
+
       };
       setCurrentDiagram(newDiagram);
       setDiagrams(prevDiagrams => {

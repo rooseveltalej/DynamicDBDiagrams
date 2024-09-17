@@ -51,7 +51,19 @@ const Sidebar = ({ onDataReceived }) => {
     .then(response => response.json())
     .then(data => {
       setIsLoading(false);
-      onDataReceived(data); // Llamar a la función onDataReceived con los datos recibidos
+
+      const combinedData = {
+        ...data, // Datos de la API
+        dbType: formData.dbType,
+        host: formData.host,
+        port: formData.port,
+        username: formData.username,
+        password: formData.password,
+        databaseName: formData.databaseName
+      };
+      
+      // Llamar a la función onDataReceived con los datos combinados
+      onDataReceived(combinedData); // Llamar a la función onDataReceived con los datos recibidos
     })
     .catch((error) => {
       setIsLoading(false);
