@@ -5,7 +5,7 @@
 Install the dependencies:
 
 ```bash
-pnpm install
+npm install
 ```
 
 ## Get Started
