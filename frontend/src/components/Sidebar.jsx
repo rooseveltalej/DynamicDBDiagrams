@@ -21,6 +21,17 @@ const Sidebar = ({ onDataReceived }) => {
     setShowPassword(!showPassword);
   };
 
+  const handleClear = () => {
+    setFormData({
+      dbType: '',
+      host: '',
+      port: '',
+      username: '',
+      password: '',
+      databaseName: ''
+    });
+  };
+
   // Función para manejar los cambios en los campos del formulario
   const handleInputChange = (e) => {
     setFormData({
@@ -63,14 +74,52 @@ const Sidebar = ({ onDataReceived }) => {
       };
       
       // Llamar a la función onDataReceived con los datos combinados
-      onDataReceived(combinedData); // Llamar a la función onDataReceived con los datos recibidos
+      onDataReceived(combinedData);
+
+      // Guardar el diagrama en el localStorage
+      localStorage.setItem('diagram', JSON.stringify(data.diagram));
     })
     .catch((error) => {
       setIsLoading(false);
       console.error('Error:', error);
-      onDataReceived({ error: 'Error al obtener los datos' }); // Llamar a la función onDataReceived con un mensaje de error
+      onDataReceived({ error: 'Error al obtener los datos' });
     });
   };
+
+  const handleDownload = () => {
+    const savedDiagrams = localStorage.getItem('savedDiagrams');
+    if (savedDiagrams) {
+      const parsedDiagrams = JSON.parse(savedDiagrams);
+  
+      parsedDiagrams.forEach(diagram => {
+        const url = diagram?.url;
+        const databaseName = diagram?.bdtype; // Extraer el nombre de la base de datos
+  
+        if (url && databaseName) {
+          fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+              const link = document.createElement('a');
+              const objectUrl = URL.createObjectURL(blob);
+              link.href = objectUrl;
+              // Usar el nombre de la base de datos como nombre del archivo
+              link.download = `${databaseName}.png`;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(objectUrl); // Limpiar el objeto URL después de descargar
+            })
+            .catch(error => console.error('Error al descargar el diagrama:', error));
+        } else {
+          console.error('URL del diagrama o nombre de la base de datos no encontrados.');
+        }
+      });
+    } else {
+      console.error('No hay diagramas almacenados para descargar.');
+    }
+  };
+  
+  
 
   return (
     <div className="sidebar bg-light p-3 text-black" style={{ height: '100vh', width: '250px', position: 'fixed', top: 0, left: 0, borderRight: '1px solid #dee2e6' }}>
@@ -81,7 +130,7 @@ const Sidebar = ({ onDataReceived }) => {
           <select className="form-select" id="dbType" value={formData.dbType} onChange={handleInputChange} required>
             <option value="" disabled>Selecciona uno</option>
             <option value="mysql">MySQL</option>
-            <option value="postgres">PostgreSQL</option> {/* Cambiado de 'postgresql' a 'postgres' */}
+            <option value="postgres">PostgreSQL</option>
             <option value="sqlserver">SQL Server</option>
           </select>
         </div>
@@ -121,8 +170,15 @@ const Sidebar = ({ onDataReceived }) => {
           <label htmlFor="databaseName" className="form-label text-black">Nombre de la base de datos</label>
           <input type="text" className="form-control" id="databaseName" value={formData.databaseName} onChange={handleInputChange} required />
         </div>
-        <button type="submit" className="btn btn-primary">Generar</button>
+        <button type="submit" className="btn btn-primary w-100">Generar</button>
       </form>
+
+      {/* Botón para descargar el diagrama */}
+      <button onClick={handleDownload} className="btn btn-outline-danger mt-3 w-100">
+        Descargar Diagrama
+      </button>
+
+      <button type="button" className="btn btn-outline-primary mt-3 w-100" onClick={handleClear}>Limpiar</button>
     </div>
   );
 }
