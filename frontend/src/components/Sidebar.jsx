@@ -40,16 +40,33 @@ const Sidebar = ({ onDataReceived }) => {
     });
   };
 
+  // Función para obtener el puerto por defecto según el tipo de base de datos
+  const getDefaultPort = (dbType) => {
+    switch (dbType) {
+      case 'mysql':
+        return '3306';
+      case 'postgres':
+        return '5432';
+      case 'sqlserver':
+        return '1433';
+      default:
+        return '';
+    }
+  };
+
   // Función para manejar el envío del formulario
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
 
+    // Si el puerto está vacío, asignar el puerto por defecto
+    const port = formData.port || getDefaultPort(formData.dbType);
+
     // Construir los parámetros de la consulta
     const queryParams = new URLSearchParams({
       bd: formData.dbType,
       host: formData.host,
-      port: formData.port,
+      port: port, // Utilizar el puerto por defecto si no se ingresó uno
       user: formData.username,
       password: formData.password,
       database: formData.databaseName
@@ -67,7 +84,7 @@ const Sidebar = ({ onDataReceived }) => {
         ...data, // Datos de la API
         dbType: formData.dbType,
         host: formData.host,
-        port: formData.port,
+        port: port, // Usar el puerto actualizado
         username: formData.username,
         password: formData.password,
         databaseName: formData.databaseName
@@ -140,7 +157,7 @@ const Sidebar = ({ onDataReceived }) => {
         </div>
         <div className="mb-3">
           <label htmlFor="port" className="form-label text-black">Puerto</label>
-          <input type="number" className="form-control" id="port" value={formData.port} onChange={handleInputChange} required />
+          <input type="number" className="form-control" id="port" value={formData.port} onChange={handleInputChange} />
         </div>
         <div className="mb-3">
           <label htmlFor="username" className="form-label text-black">Nombre de usuario</label>
