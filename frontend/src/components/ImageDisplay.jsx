@@ -30,6 +30,7 @@ const ImageDisplay = ({ data }) => {
       // Si no se pudo generar el diagrama, muestra un mensaje indicando que se intente de nuevo
       return (
         <div className="image-display mt-4">
+          {alert("No se pudo generar el diagrama. Por favor, verifique los datos ingresados e intente de nuevo.")}
           <p>No se pudo generar el diagrama. Por favor, intente de nuevo.</p>
         </div>
       );
