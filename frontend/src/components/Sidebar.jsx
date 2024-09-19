@@ -174,11 +174,11 @@ const Sidebar = ({ onDataReceived }) => {
       </form>
 
       {/* Botón para descargar el diagrama */}
-      <button onClick={handleDownload} className="btn btn-outline-danger mt-3 w-100">
+      <button onClick={handleDownload} className="btn btn-outline-primary mt-3 w-100">
         Descargar Diagrama
       </button>
 
-      <button type="button" className="btn btn-outline-primary mt-3 w-100" onClick={handleClear}>Limpiar</button>
+      <button type="button" className="btn btn-outline-danger mt-3 w-100" onClick={handleClear}>Limpiar</button>
     </div>
   );
 }
